@@ -23,3 +23,15 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+Cypress.Commands.add('login', (username, password) => {
+    cy.get('input[id="txt-username"]').type(username)
+    cy.get('input[id="txt-password"]').type(password)
+    cy.get('#btn-login').click()
+})
+
+Cypress.Commands.add('logout', () => {
+    cy.get('#menu-toggle').click()
+    cy.get('a[href="authenticate.php?logout"]').click()
+})
+
