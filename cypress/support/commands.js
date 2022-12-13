@@ -35,3 +35,30 @@ Cypress.Commands.add('logout', () => {
     cy.get('a[href="authenticate.php?logout"]').click()
 })
 
+Cypress.Commands.add('facilityPick', (facility) => {
+    cy.get('#combo_facility').select(facility)
+})
+
+Cypress.Commands.add('applyCheck', (check) => {
+    if(check == "Y" ){
+        cy.get('#chk_hospotal_readmission').check()
+    }else if(check == "N" ){
+        cy.get('#chk_hospotal_readmission').uncheck()
+    }
+})
+
+Cypress.Commands.add('chooseHealthProgram', (program) => {
+    cy.get('#appointment').find('.col-sm-4').find('input[name=programs]').check(program)
+})
+
+Cypress.Commands.add('readDate', (date) => {
+    const dateBox = date.split('/') 
+    var dateObj ={
+        day: dateBox[0].toString(),
+        month: dateBox[1].toString(),
+        year:dateBox[2].toString()
+    }
+    return dateObj
+})
+
+
