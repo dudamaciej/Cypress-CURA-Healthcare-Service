@@ -1,4 +1,5 @@
 describe('Appointment', () => {
+
     beforeEach(() => {
         cy.visit('/');
         cy.get('#btn-make-appointment').click();
@@ -6,6 +7,7 @@ describe('Appointment', () => {
             cy.login(user.username,user.password)
         })  
     })
+
     it('verifies appointment form', () => {
         cy.get('#appointment').should('be.visible').then((form)=>{
             cy.get(form).find('#combo_facility').find('option').should('have.length', 3)
@@ -16,19 +18,22 @@ describe('Appointment', () => {
             cy.get(form).find('#btn-book-appointment').should('be.visible')
         })        
     })
-    it('makes appointment', () => {
-       
-        cy.facilityPick('Hongkong CURA Healthcare Center')
-        cy.applyCheck('N')
-        cy.chooseHealthProgram('None')
-        cy.readDate('10/07/1999').then(dateObj =>{
-           var day = dateObj.day
-           var month = dateObj.month
-           var year = dateObj.year
-           cy.log(day,month,year)
-        })
-    
-          
+
+    it.only('makes appointment by date picker', () => {
+        cy.fixture('appointments').then((appointment) => {   
+            cy.facilityPick(appointment.facility)
+            cy.applyHospitalReadmission(appointment.hospitalReadmission)
+            cy.chooseHealthProgram(appointment.healtcareProgram)
+            cy.readDate(appointment.visitDate).then(dateObj =>{
+            let day = dateObj.day
+            let month = dateObj.month
+            let year = dateObj.year
+            cy.insertDate(day,month,year)
+            })  
+            cy.addComment(appointment.comment)
+            cy.submitAppointment()
+            cy.verifyConfirmation(appointment.facility,appointment.hospitalReadmission,appointment.healtcareProgram,appointment.visitDate,appointment.comment)
+        })    
     })
 
     afterEach(() => {

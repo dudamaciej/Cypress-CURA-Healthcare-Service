@@ -39,10 +39,10 @@ Cypress.Commands.add('facilityPick', (facility) => {
     cy.get('#combo_facility').select(facility)
 })
 
-Cypress.Commands.add('applyCheck', (check) => {
-    if(check == "Y" ){
+Cypress.Commands.add('applyHospitalReadmission', (check) => {
+    if(check == "Yes" ){
         cy.get('#chk_hospotal_readmission').check()
-    }else if(check == "N" ){
+    }else if(check == "No" ){
         cy.get('#chk_hospotal_readmission').uncheck()
     }
 })
@@ -61,4 +61,77 @@ Cypress.Commands.add('readDate', (date) => {
     return dateObj
 })
 
+Cypress.Commands.add('insertFullDateByText', (date) => {
+    cy.get('.date').type(date + '{esc}')
+})
+
+Cypress.Commands.add('insertYear', (year) => {
+    cy.get('.date').click()
+    cy.get('.datepicker-days').find('.datepicker-switch').click()  
+    year = parseInt(year)
+   
+    cy.get('.datepicker-months').find('.datepicker-switch').then( text =>{
+        let activeYear = parseInt(text.text())   
+        const whileLoop = (wantedYear,actYear) =>{
+            if(wantedYear == actYear){
+                return
+            }
+            if( wantedYear < actYear) {
+                cy.get('.datepicker-months').find('.prev').click()
+                actYear --
+            }
+            if( wantedYear > actYear ) {
+                cy.get('.datepicker-months').find('.next').click()
+                actYear ++
+            }
+            whileLoop(wantedYear,actYear);
+        }
+        if(activeYear != year)
+        {
+            whileLoop(year,activeYear)
+        }
+    })
+})
+
+Cypress.Commands.add('insertMonth', (month) => {
+    cy.get('.month').eq(month-1).click()
+})
+
+Cypress.Commands.add('insertDay', (day) => {
+    cy.get('.day').not('.old').not('.new').each((element) =>{
+        if(element.text()== day){
+            element.click()
+            return
+        }
+    })
+})
+
+Cypress.Commands.add('insertDate', (day,month,year) => {
+    cy.insertYear(year)
+    cy.insertMonth(month)
+    cy.insertDay(day)
+    cy.get('.date').type('{esc}')
+})
+
+Cypress.Commands.add('addComment', (comment) => {
+    if(comment.length != 0){
+        cy.get('#txt_comment').type(comment)
+    }
+})
+
+Cypress.Commands.add('submitAppointment', () => {
+    cy.get('#btn-book-appointment').click()
+    cy.location('href').should('include', '#summary')
+    cy.get('#summary').find('h2').should('have.text','Appointment Confirmation');
+})
+
+Cypress.Commands.add('verifyConfirmation', (facility, hospital_readmission, program, date, comment) => {
+    cy.get('#summary').should('be.visible').then( () => {
+        cy.get('#facility').should('have.text',facility)
+        cy.get('#hospital_readmission').should('have.text',hospital_readmission)
+        cy.get('#program').should('have.text',program)
+        cy.get('#visit_date').should('have.text',date)
+        cy.get('#comment').should('have.text',comment)
+    }) 
+})
 
