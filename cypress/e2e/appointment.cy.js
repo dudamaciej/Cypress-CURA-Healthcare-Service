@@ -19,20 +19,19 @@ describe('Appointment', () => {
         })        
     })
 
-    it.only('makes appointment by date picker', () => {
+    it('makes appointment by date picker', () => {
         cy.fixture('appointments').then((appointment) => {   
-            cy.facilityPick(appointment.facility)
-            cy.applyHospitalReadmission(appointment.hospitalReadmission)
-            cy.chooseHealthProgram(appointment.healtcareProgram)
-            cy.readDate(appointment.visitDate).then(dateObj =>{
-            let day = dateObj.day
-            let month = dateObj.month
-            let year = dateObj.year
-            cy.insertDate(day,month,year)
-            })  
-            cy.addComment(appointment.comment)
-            cy.submitAppointment()
-            cy.verifyConfirmation(appointment.facility,appointment.hospitalReadmission,appointment.healtcareProgram,appointment.visitDate,appointment.comment)
+            const testCaseNumber = Cypress._.random(appointment.length - 1)
+            cy.makeAppointment(appointment[testCaseNumber],"picker")
+            cy.verifyConfirmation(appointment[testCaseNumber].facility,appointment[testCaseNumber].hospitalReadmission,appointment[testCaseNumber].healtcareProgram,appointment[testCaseNumber].visitDate,appointment[testCaseNumber].comment)
+        })    
+    })
+
+    it('makes appointment by date string', () => {
+        cy.fixture('appointments').then((appointment) => {   
+            const testCaseNumber = Cypress._.random(appointment.length - 1)
+            cy.makeAppointment(appointment[testCaseNumber],"string")
+            cy.verifyConfirmation(appointment[testCaseNumber].facility,appointment[testCaseNumber].hospitalReadmission,appointment[testCaseNumber].healtcareProgram,appointment[testCaseNumber].visitDate,appointment[testCaseNumber].comment)
         })    
     })
 

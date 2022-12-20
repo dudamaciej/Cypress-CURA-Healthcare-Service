@@ -1,4 +1,5 @@
 describe('Footer', () => {
+    
     it('verifies footer elements', () => {
         cy.visit('/')
         cy.get('footer').should('be.visible').then((footer)=>{

@@ -53,7 +53,7 @@ Cypress.Commands.add('chooseHealthProgram', (program) => {
 
 Cypress.Commands.add('readDate', (date) => {
     const dateBox = date.split('/') 
-    var dateObj ={
+    const dateObj ={
         day: dateBox[0].toString(),
         month: dateBox[1].toString(),
         year:dateBox[2].toString()
@@ -106,10 +106,15 @@ Cypress.Commands.add('insertDay', (day) => {
     })
 })
 
-Cypress.Commands.add('insertDate', (day,month,year) => {
-    cy.insertYear(year)
-    cy.insertMonth(month)
-    cy.insertDay(day)
+Cypress.Commands.add('insertDate', (date) => {
+    cy.readDate(date).then(dateObj =>{
+        const day = dateObj.day
+        const month = dateObj.month
+        const year = dateObj.year
+        cy.insertYear(year)
+        cy.insertMonth(month)
+        cy.insertDay(day)
+    })  
     cy.get('.date').type('{esc}')
 })
 
@@ -123,6 +128,19 @@ Cypress.Commands.add('submitAppointment', () => {
     cy.get('#btn-book-appointment').click()
     cy.location('href').should('include', '#summary')
     cy.get('#summary').find('h2').should('have.text','Appointment Confirmation');
+})
+
+Cypress.Commands.add('makeAppointment',(data, type) => {
+    cy.facilityPick(data.facility)
+    cy.applyHospitalReadmission(data.hospitalReadmission)
+    cy.chooseHealthProgram(data.healtcareProgram)
+    if(type == "string"){
+        cy.insertFullDateByText(data.visitDate)
+    }else if(type == "picker"){
+        cy.insertDate(data.visitDate)
+    }
+    cy.addComment(data.comment)
+    cy.submitAppointment()
 })
 
 Cypress.Commands.add('verifyConfirmation', (facility, hospital_readmission, program, date, comment) => {
