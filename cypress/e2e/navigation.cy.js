@@ -13,11 +13,7 @@ describe('Navigation', () => {
 
     it('verifies navigation without log in', () => {
         cy.fixture('nav_options').then((menuOptions) => {
-            cy.get('#menu-toggle').click()
-			cy.get('ul[class="sidebar-nav"]').find('li').should('have.length',menuOptions.anonymusUserOptions.length)
-			menuOptions.anonymusUserOptions.forEach((option) => {
-				cy.get('ul[class="sidebar-nav"]').find('li').should('contain',option)
-			})
+            cy.verifyNavigationOptions(menuOptions.anonymusUserOptions)
 		})
     })
 
@@ -27,11 +23,7 @@ describe('Navigation', () => {
             cy.login(user.username,user.password)
         })
         cy.fixture('nav_options').then((menuOptions) => {
-            cy.get('#menu-toggle').click()
-			cy.get('ul[class="sidebar-nav"]').find('li').should('have.length',menuOptions.loggedUserOptions.length)
-			menuOptions.loggedUserOptions.forEach((option) => {
-				cy.get('ul[class="sidebar-nav"]').find('li').should('contain',option)
-			})
+            cy.verifyNavigationOptions(menuOptions.loggedUserOptions)
 		})
        
     })

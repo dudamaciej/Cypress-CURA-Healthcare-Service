@@ -135,3 +135,11 @@ Cypress.Commands.add('verifyHistory', (appointment) => {
         cy.get(historyPanel).find('#comment').should('have.text', appointment.comment)
     })
 })
+
+Cypress.Commands.add('verifyNavigationOptions', (options) => {
+    cy.get('#menu-toggle').click()
+    cy.get('ul[class="sidebar-nav"]').find('li').should('have.length',options.length)
+    options.forEach((option) => {
+        cy.get('ul[class="sidebar-nav"]').find('li').should('contain',option)
+    })
+})
