@@ -1,5 +1,5 @@
 
-# Cypress Healthcare
+# Cypress CURA Healthcare Service
 
 This repo contains e2e tests written in Cypress for https://katalon-demo-cura.herokuapp.com/ site.
 
